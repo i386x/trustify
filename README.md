@@ -242,4 +242,4 @@ CPE (Product?) and/or pURLs described by the SBOM
 * [trustify user interface](https://github.com/trustification/trustify-ui)
 * [Helm charts used for the trustify deployment](https://github.com/trustification/trustify-helm-charts)
 * [OpenShift Operator used for the trustify deployment](https://github.com/trustification/trustify-operator)
-* [trustify API & user interface test suite](https://github.com/trustification/trustify-ui-tests)
+* [trustify API & user interface test suite](https://github.com/trustification/trustify-tests)
