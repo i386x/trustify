@@ -1,0 +1,27 @@
+ARG SYFT_REGISTRY=ghcr.io/anchore
+ARG SYFT_IMAGE=syft
+ARG SYFT_TAG=latest
+ARG LOCAL_USER=gensbom
+
+FROM registry.access.redhat.com/ubi9/ubi:latest
+
+ARG SYFT_REGISTRY
+ARG SYFT_IMAGE
+ARG SYFT_TAG
+ARG LOCAL_USER
+
+COPY --from=${SYFT_REGISTRY}/${SYFT_IMAGE}:${SYFT_TAG} /syft /usr/local/bin/syft
+COPY ./gensbom.sh /usr/local/bin/gensbom.sh
+
+RUN dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm && \
+    dnf -y install gawk httpie zip && \
+    dnf clean all && \
+    useradd -ms /bin/bash ${LOCAL_USER} && \
+    chown -R ${LOCAL_USER} /usr/local/bin && \
+    chmod -R u+rwx /usr/local/bin
+
+USER ${LOCAL_USER}
+
+WORKDIR /home/${LOCAL_USER}
+
+ENTRYPOINT ["/usr/local/bin/gensbom.sh"]
