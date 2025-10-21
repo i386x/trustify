@@ -71,6 +71,13 @@ function usage() {
 	    A file with the valid container registry credentials following the
 	    Docker format. This file must be in the current working directory
 
+	  ${_VIOLET}ca-bundle.crt${_RESET}
+	    SSL/TLS certificates bundle. If the TPA instance uses SSL/TLS, this
+	    file is needed to be in the current working directory. In the most
+	    of the scenarios, it can be copied over from ${_Q1}/etc/pki/ca-trust/extracted/pem${_Q0}:
+
+	      ${_AZURE}cp /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem ./ca-bundle.crt${_RESET}
+
 	  ${_VIOLET}TPA_AUTH_TOKEN${_RESET}
 	    Authorization token for TPA
 
@@ -124,6 +131,12 @@ if [[ -z "${TPA_AUTH_TOKEN:-}" ]]; then
     _AUTH_HEADER=""
 fi
 
+_CA_BUNDLE="${WORKSPACE}/ca-bundle.crt"
+
+if [[ -f "${_CA_BUNDLE}" ]]; then
+    export SSL_CERT_FILE="${_CA_BUNDLE}"
+fi
+
 _SBOMS_DIR="${WORKSPACE}/sboms"
 _SBOMS_ARCHIVE="sboms.zip"
 
@@ -131,6 +144,9 @@ rm -rf "${_SBOMS_DIR}" "${WORKSPACE}/${_SBOMS_ARCHIVE}"
 mkdir -p "${_SBOMS_DIR}"
 
 _SBOM_COUNTER=0
+
+# Service ping: curl will report when token and/or certs are not valid
+curl -sSfL ${_AUTH_HEADER:+-H "${_AUTH_HEADER}"} "${TPA_SERVICE_URL}/api/v2/sbom?limit=1" > /dev/null || :
 
 while IFS="" read -r _IMAGE || [[ -n "${_IMAGE}" ]]; do
     if [[ -z "${_IMAGE}" ]]; then

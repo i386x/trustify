@@ -7,6 +7,14 @@
 * `podman`
 * [`config.json`](https://github.com/google/go-containerregistry/tree/main/pkg/authn#docker-config-auth)
   in the current working directory
+* `ca-bundle.crt` in the current working directory if SSL/TLS secured connection
+  to the running TPA service is required; in most situations, it can be copied
+  over from `/etc/pki/ca-trust/extracted/pem`:
+
+  ```
+  cp /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem ./ca-bundle.crt
+  ```
+
 * `TPA_SERVICE_URL`, holding the URL to the running TPA service, e.g.
   `my.tpa.instance.abc:8765`
 * `TPA_AUTH_TOKEN`, holding the valid authorization token, e.g.
@@ -90,7 +98,7 @@ The `Containerfile` build arguments:
 * `SYFT_REGISTRY`, holding the container registry from which the `syft`
   container is pulled (default: `ghcr.io/anchore`)
 * `SYFT_IMAGE`, holding the `syft` container image name (default: `syft`)
-* `SYFT_TAG`, holding the `syft` container image tag (default: `latest`)
+* `SYFT_TAG`, holding the `syft` container image tag (default: `v1.36.0`)
 
 ## References
 
