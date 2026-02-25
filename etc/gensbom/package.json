@@ -1,0 +1,27 @@
+{
+  "name": "gensbom",
+  "version": "1.0.0",
+  "description": "Generate SBOMs using Syft and upload them to TPA",
+  "type": "module",
+  "main": "index.js",
+  "bin": {
+    "gensbom": "./index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node index.js",
+    "dev": "tsx index.ts"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "axios": "^1.6.7",
+    "archiver": "^7.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.17",
+    "@types/archiver": "^6.0.2",
+    "typescript": "^5.3.3",
+    "tsx": "^4.7.1"
+  }
+}
