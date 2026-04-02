@@ -2,14 +2,19 @@
 import { defineConfig, globalIgnores } from "eslint/config";
 import js from "@eslint/js";
 import stylistic from "@stylistic/eslint-plugin";
-import tseslint from "typescript-eslint";
 import tsParser from "@typescript-eslint/parser";
+import tseslint from "typescript-eslint";
+
+const COMPLEXITY = 10;
+const MAX_LINE_LENGTH = 79;
+const MAX_NESTED_CALLBACKS = 3;
+const MAX_PARAMS = 5;
 
 export default defineConfig([
   // Besides ESLint's default `**/*.js`, `**/*.cjs`, and `**/*.mjs` lint also
   // TypeScript files:
   {
-    files: ["**/*.ts"]
+    files: ["**/*.ts"],
   },
   {
     plugins: {
@@ -17,13 +22,13 @@ export default defineConfig([
     },
     extends: ["js/recommended"],
     rules: {
-      "array-callback-return": ["error", { "checkForEach": true }],
+      "array-callback-return": ["error", { checkForEach: true }],
       "no-constructor-return": "error",
       "no-duplicate-imports": [
         "error",
         {
-          "includeExports": true,
-          "allowSeparateTypeImports": true,
+          includeExports: true,
+          allowSeparateTypeImports: true,
         },
       ],
       "no-inner-declarations": [
@@ -42,7 +47,7 @@ export default defineConfig([
       "camelcase": "error",
       "capitalized-comments": "error",
       "class-methods-use-this": "error",
-      "complexity": ["error", 10],
+      "complexity": ["error", COMPLEXITY],
       "consistent-return": "error",
       "consistent-this": "error",
       "curly": ["error", "multi-or-nest"],
@@ -51,25 +56,26 @@ export default defineConfig([
       "default-param-last": "error",
       "dot-notation": "error",
       "eqeqeq": "error",
-      "func-name-matching": ["error", { "considerPropertyDescriptor": true }],
-      "func-style": "error",
+      "func-name-matching": ["error", { considerPropertyDescriptor: true }],
+      "func-style": ["error", "declaration"],
       "grouped-accessor-pairs": "error",
       "guard-for-in": "error",
       "init-declarations": "error",
       "logical-assignment-operators": [
         "error",
+        "always",
         { enforceForIfStatements: true },
       ],
       "max-depth": "error",
       "max-lines-per-function": [
         "error",
         {
-          "skipBlankLines": true,
-          "skipComments": true,
+          skipBlankLines: true,
+          skipComments: true,
         },
       ],
-      "max-nested-callbacks": ["error", 3],
-      "max-params": ["error", 5],
+      "max-nested-callbacks": ["error", MAX_NESTED_CALLBACKS],
+      "max-params": ["error", MAX_PARAMS],
       "max-statements": "error",
       "new-cap": "error",
       "no-alert": "error",
@@ -84,7 +90,7 @@ export default defineConfig([
       "no-extra-bind": "error",
       "no-extra-boolean-cast": [
         "error",
-        { "enforceForInnerExpressions": true },
+        { enforceForInnerExpressions: true },
       ],
       "no-extra-label": "error",
       "no-implied-eval": "error",
@@ -98,11 +104,11 @@ export default defineConfig([
       "no-magic-numbers": [
         "error",
         {
-          "ignore": [-1, 0, 1],
-          "ignoreArrayIndexes": true,
-          "enforceConst": true,
-          "ignoreEnums": true,
-          "ignoreTypeIndexes": true,
+          ignore: [-1, 0, 1],
+          ignoreArrayIndexes: true,
+          enforceConst: true,
+          ignoreEnums: true,
+          ignoreTypeIndexes: true,
         },
       ],
       "no-new": "error",
@@ -118,8 +124,8 @@ export default defineConfig([
       "no-shadow": [
         "error",
         {
-          "builtinGlobals": true,
-          "hoist": "all",
+          builtinGlobals: true,
+          hoist: "all",
         },
       ],
       "no-throw-literal": "error",
@@ -173,12 +179,20 @@ export default defineConfig([
     },
     languageOptions: {
       parser: tsParser,
+      parserOptions: {
+        projectService: {
+          allowDefaultProject: ["eslint.config.mjs", "bin/gensbom.js"],
+        },
+      },
     },
-    extends: [stylistic.config.customize({ semi: true })],
+    extends: [stylistic.configs.customize({ quotes: "double", semi: true })],
     rules: {
-      "@stylistic/max-len": ["error", { "code": 79 }],
+      "@stylistic/max-len": [
+        "error",
+        { code: MAX_LINE_LENGTH, ignoreUrls: true },
+      ],
       "@stylistic/no-extra-semi": "error",
     },
   },
-  globalIgnores(["**/.git", "**/node_modules"]),
+  globalIgnores(["**/.git", "**/dist", "**/node_modules"]),
 ]);

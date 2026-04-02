@@ -1,6 +1,8 @@
-node_modules/
+dist/
 index.js
 index.js.map
 *.log
+node_modules/
 sboms/
 sboms.zip
+*.tsbuildinfo

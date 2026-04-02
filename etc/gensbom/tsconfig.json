@@ -11,12 +11,13 @@
     "strict": true,
     "module": "nodenext",
     "moduleResolution": "node16",
+    "rootDir": "./src",
     "types": ["node"],
     "outDir": "./dist",
     "lib": ["es2022"],
     "target": "es2022",
     "composite": true
   },
-  "include": ["src"],
+  "include": ["bin", "src"],
   "exclude": ["dist", "node_modules"]
 }
