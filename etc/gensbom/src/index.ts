@@ -8,7 +8,7 @@ import { execSync } from "node:child_process";
 import { join } from "node:path";
 import { usage } from "./usage.js";
 
-const NUM_WIDTH = 10;
+const SBOM_ID_WIDTH = 10;
 const SYFT_CMD = "syft";
 const SBOMS_DIR_NAME = "sboms";
 const SBOMS_ARCHIVE_NAME = `${SBOMS_DIR_NAME}.zip`;
@@ -19,8 +19,8 @@ function validateImage(image: string): string | null {
   if (!/^[0-9a-zA-Z.:/_-]+$/u.test(result)) {
     warning(
       `Image URI ${JSON.stringify(result)} contains invalid characters. Only\n`
-      + "alphanumeric characters, underscore (_), dot (.), colon (:),\n"
-      + "hyphen (-), and slash (/) are allowed.",
+        + "alphanumeric characters, underscore (_), dot (.), colon (:),\n"
+        + "hyphen (-), and slash (/) are allowed.",
     );
     return null;
   }
@@ -29,12 +29,11 @@ function validateImage(image: string): string | null {
 
 function execSyft(image: string, sbom: string, shell: string): boolean {
   try {
-    execSync(
-      `${SYFT_CMD} -v scan ${image} -o cyclonedx-json=${sbom}`,
-      { stdio: "inherit", shell },
-    );
-  }
-  catch {
+    execSync(`${SYFT_CMD} -v scan ${image} -o cyclonedx-json=${sbom}`, {
+      stdio: "inherit",
+      shell,
+    });
+  } catch {
     return false;
   }
   return true;
@@ -56,8 +55,7 @@ class SbomGenerator {
   }
 
   prepare(): void {
-    if (this.prepared)
-      return;
+    if (this.prepared) return;
 
     rmSync(this.sbomsDir, { force: true, recursive: true });
     rmSync(join(workspace(), SBOMS_ARCHIVE_NAME), { force: true });
@@ -68,7 +66,7 @@ class SbomGenerator {
   }
 
   sbomFileFromImageURI(image: string): string {
-    const paddedId = this.imageCount.toString().padStart(NUM_WIDTH, "0");
+    const paddedId = this.imageCount.toString().padStart(SBOM_ID_WIDTH, "0");
     const sanitizedImage = image.replace(":", "-").replace("/", "-");
     const fileName = `sbom${paddedId}-${sanitizedImage}.json`;
 
@@ -79,8 +77,7 @@ class SbomGenerator {
   runSyft(image: string): string | null {
     const validatedImage = validateImage(image);
 
-    if (validatedImage === null)
-      return null;
+    if (validatedImage === null) return null;
 
     this.prepare();
 

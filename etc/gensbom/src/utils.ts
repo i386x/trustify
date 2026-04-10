@@ -25,9 +25,11 @@ export function scriptName(): string {
 export function stringify(obj: object, indent = "  "): string {
   let result = "";
 
-  JSON.stringify(obj, null, "  ").split("\n").forEach((line) => {
-    result += (line !== "") ? `${indent}${line}\n` : "\n";
-  });
+  JSON.stringify(obj, null, "  ")
+    .split("\n")
+    .forEach((line) => {
+      result += line !== "" ? `${indent}${line}\n` : "\n";
+    });
   return result;
 }
 
@@ -35,8 +37,7 @@ export function inform(...messages: string[]): void {
   messages.forEach((msg) => {
     console.log(styleText("blue", `${scriptName()}: ${msg}`));
   });
-  if (messages.length > 0)
-    console.log("");
+  if (messages.length > 0) console.log("");
 }
 
 export function warning(...messages: string[]): void {
@@ -45,8 +46,7 @@ export function warning(...messages: string[]): void {
       styleText("yellowBright", `WARNING[${scriptName()}]: ${msg}`),
     );
   });
-  if (messages.length > 0)
-    console.error("");
+  if (messages.length > 0) console.error("");
 }
 
 export function werror(message: string): void {
@@ -59,8 +59,7 @@ export function handleError(err: unknown): number {
 
   if (err instanceof Error) {
     ({ message } = err);
-    if (err instanceof FatalError)
-      exitCode = err.errorCode;
+    if (err instanceof FatalError) exitCode = err.errorCode;
   }
   werror(`ERROR[${scriptName()}]: ${message}.`);
   return exitCode;
@@ -73,8 +72,7 @@ export function workspace(): string {
 export function isFile(path: string): boolean {
   try {
     return statSync(path).isFile();
-  }
-  catch {
+  } catch {
     return false;
   }
 }
@@ -83,9 +81,8 @@ export function isNonEmptyFile(path: string): boolean {
   try {
     const stat = statSync(path);
 
-    return (stat.isFile() && stat.size > 0);
-  }
-  catch {
+    return stat.isFile() && stat.size > 0;
+  } catch {
     return false;
   }
 }

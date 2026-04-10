@@ -6,7 +6,6 @@ import { main } from "../dist/index.js";
 
 try {
   exit(await main());
-}
-catch (err) {
+} catch (err) {
   exit(handleError(err));
 }

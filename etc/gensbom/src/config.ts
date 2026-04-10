@@ -36,8 +36,8 @@ class InsecureConfigError extends FatalError {
   constructor(cfgfile: string, message: string) {
     super(
       `Docker config file \`${cfgfile}\` does not pass security validations\n`
-      + "and therefore the operation must be terminated.\n"
-      + `Reason: ${message}`,
+        + "and therefore the operation must be terminated.\n"
+        + `Reason: ${message}`,
     );
   }
 }
@@ -47,7 +47,7 @@ class UnsupportedOCIRegistryError extends InsecureConfigError {
     super(
       cfgfile,
       `OCI registry \`${registry}\` is not supported - credentials for\n`
-      + `\`${registry}\` cannot be validated`,
+        + `\`${registry}\` cannot be validated`,
     );
   }
 }
@@ -64,9 +64,9 @@ function validateQuayIO(cfgfile: string, auth: Auth): void {
     throw new InsecureConfigError(
       cfgfile,
       "Detected `quay.io` credentials that are not for robot account. For\n"
-      + "the security reasons, please create a robot account on `quay.io`\n"
-      + "and use these to access the OCI registry. It is recommended to\n"
-      + "set the robot account to have only read-only access",
+        + "the security reasons, please create a robot account on `quay.io`\n"
+        + "and use these to access the OCI registry. It is recommended to\n"
+        + "set the robot account to have only read-only access",
     );
   }
 }
@@ -109,7 +109,8 @@ export class Config {
       ) as DockerConfig;
       if (!config.auths) {
         throw new ConfigError(
-          this.dockerConfig, "Missing or empty `auths` property",
+          this.dockerConfig,
+          "Missing or empty `auths` property",
         );
       }
       Object.keys(config.auths).forEach((registry) => {
@@ -121,17 +122,15 @@ export class Config {
             throw new UnsupportedOCIRegistryError(this.dockerConfig, registry);
         }
       });
-    }
-    catch (err: unknown) {
-      if (err instanceof FatalError)
-        throw err;
+    } catch (err: unknown) {
+      if (err instanceof FatalError) throw err;
 
-      const detail = (err instanceof Error) ? err.message : "Unknown error";
+      const detail = err instanceof Error ? err.message : "Unknown error";
       warning(
         `Docker configuration with credentials (\`${this.dockerConfig}\`) is\n`
-        + "not present or cannot be opened for reading or it is corrupted.\n"
-        + "Syft will not be able to access private container registries.\n"
-        + `Error detail: ${detail}.`,
+          + "not present or cannot be opened for reading or it is corrupted.\n"
+          + "Syft will not be able to access private container registries.\n"
+          + `Error detail: ${detail}.`,
       );
       this.dockerConfig = "";
     }
@@ -148,7 +147,6 @@ export class Config {
   }
 
   checkTrustCert(): void {
-    if (!isFile(this.trustCert))
-      this.trustCert = "";
+    if (!isFile(this.trustCert)) this.trustCert = "";
   }
 }

@@ -60,8 +60,7 @@ class QuotedTerm extends Term {
   override format(style: Style): string {
     let output = super.format(style);
 
-    if (!output.includes(ESC))
-      output = `\`${output}\``;
+    if (!output.includes(ESC)) output = `\`${output}\``;
     return output;
   }
 }
@@ -95,10 +94,8 @@ class Line implements Formatter {
     let output = "";
 
     this.fragments.forEach((fragment) => {
-      if (typeof fragment === "string")
-        output += fragment;
-      else
-        output += fragment.format(style);
+      if (typeof fragment === "string") output += fragment;
+      else output += fragment.format(style);
     });
     return output;
   }
@@ -107,8 +104,7 @@ class Line implements Formatter {
 function fragmentize(content: string): Fragment[] {
   return content.split(/(?<term><[^>]+>|`[^`]+`)/u).map((part) => {
     if (part.length >= MIN_TERM_LENGTH) {
-      if (part.startsWith("<") && part.endsWith(">"))
-        return new Term(part);
+      if (part.startsWith("<") && part.endsWith(">")) return new Term(part);
       else if (part.startsWith("`") && part.endsWith("`"))
         return new QuotedTerm(part.slice(1, part.length - 1));
       return part;
@@ -137,8 +133,7 @@ export class HelpFormatter implements Formatter {
   }
 
   par(...content: string[]): this {
-    if (content.length === 0)
-      return this;
+    if (content.length === 0) return this;
     content.forEach((item) => {
       this.lines.push(new Line(...fragmentize(item)));
     });
@@ -147,30 +142,28 @@ export class HelpFormatter implements Formatter {
   }
 
   codeblock(...content: CodeBlockItem[]): this {
-    if (content.length === 0)
-      return this;
+    if (content.length === 0) return this;
     content.forEach((item) => {
-      const chunk = (typeof item === "string") ? item : item.join(" ");
+      const chunk = typeof item === "string" ? item : item.join(" ");
 
       if (chunk.startsWith("#"))
         this.lines.push(new Line("  ", new Comment(chunk)));
-      else
-        this.lines.push(new Line("  ", new Code(chunk)));
+      else this.lines.push(new Line("  ", new Code(chunk)));
     });
     this.blankLine();
     return this;
   }
 
   warning(...content: string[]): this {
-    if (content.length === 0)
-      return this;
+    if (content.length === 0) return this;
 
     let cnt = 0;
     content.forEach((item) => {
       const fragments: Fragment[] = [];
 
       fragments.push(
-        (cnt === 0) ? new Warning() : " ".repeat(WARNING.length), " ",
+        cnt === 0 ? new Warning() : " ".repeat(WARNING.length),
+        " ",
       );
       fragments.push(...fragmentize(item));
       this.lines.push(new Line(...fragments));

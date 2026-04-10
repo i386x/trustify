@@ -11,7 +11,7 @@ const MAX_NESTED_CALLBACKS = 3;
 const MAX_PARAMS = 5;
 
 export default defineConfig([
-  // Besides ESLint's default `**/*.js`, `**/*.cjs`, and `**/*.mjs` lint also
+  // Besides ESLint's default `**/*.js`, `**/*.cjs`, and `**/*.mjs`, lint also
   // TypeScript files:
   {
     files: ["**/*.ts"],
@@ -88,10 +88,7 @@ export default defineConfig([
       "no-eval": "error",
       "no-extend-native": "error",
       "no-extra-bind": "error",
-      "no-extra-boolean-cast": [
-        "error",
-        { enforceForInnerExpressions: true },
-      ],
+      "no-extra-boolean-cast": ["error", { enforceForInnerExpressions: true }],
       "no-extra-label": "error",
       "no-implied-eval": "error",
       "no-inline-comments": "error",
@@ -185,8 +182,18 @@ export default defineConfig([
         },
       },
     },
-    extends: [stylistic.configs.customize({ quotes: "double", semi: true })],
+    extends: [
+      stylistic.configs.customize({
+        braceStyle: "1tbs",
+        quotes: "double",
+        semi: true,
+      }),
+    ],
     rules: {
+      // Conflicts with `prettier`
+      "@stylistic/indent": "off",
+      // Conflicts with `prettier`
+      "@stylistic/indent-binary-ops": "off",
       "@stylistic/max-len": [
         "error",
         { code: MAX_LINE_LENGTH, ignoreUrls: true },

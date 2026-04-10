@@ -18,7 +18,8 @@ function textifyResponse(response: AxiosResponse, indent = "| "): string {
   let result = `${indent}Status: ${status} ${response.statusText}`;
 
   if (
-    response.data && response.headers["Content-Type"] === "application/json"
+    response.data
+    && response.headers["Content-Type"] === "application/json"
   ) {
     result += `\n${indent}Data:\n`;
     result += stringify(
@@ -33,10 +34,8 @@ function textifyResponse(response: AxiosResponse, indent = "| "): string {
 function printError(err: unknown, indent = "| "): void {
   if (err instanceof AxiosError && err.response)
     werror(textifyResponse(err.response, indent));
-  else if (err instanceof Error)
-    werror(`${indent}{Error: ${err.message}`);
-  else
-    werror(`${indent}Unknown error`);
+  else if (err instanceof Error) werror(`${indent}{Error: ${err.message}`);
+  else werror(`${indent}Unknown error`);
 }
 
 export class TPAService {
@@ -66,42 +65,33 @@ export class TPAService {
         },
         async (err) => {
           printError(err);
-          if (err instanceof Error)
-            return Promise.reject(err);
+          if (err instanceof Error) return Promise.reject(err);
           return Promise.reject(new Error("Unknown error"));
         },
       );
       this.service = service;
-    }
-    else
-      this.service = null;
+    } else this.service = null;
   }
 
   async ping(): Promise<void> {
-    if (this.service === null)
-      return;
+    if (this.service === null) return;
     try {
       inform(`Pinging ${this.baseUrl} ...`);
       await this.service.get("/api/v2/sbom?limit=1");
-    }
-    catch {
+    } catch {
       /* Ignore all errors here, problems are printed to the standard error
          output via response interceptors */
     }
   }
 
   async ingest(sbom: string | null): Promise<void> {
-    if (this.service === null || sbom === null)
-      return;
+    if (this.service === null || sbom === null) return;
     try {
       inform(`Ingesting ${sbom} ...`);
-      await this.service.post(
-        "/api/v2/sbom",
-        readFileSync(sbom, "utf-8"),
-        { headers: { "Content-Type": "application/json" } },
-      );
-    }
-    catch {
+      await this.service.post("/api/v2/sbom", readFileSync(sbom, "utf-8"), {
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch {
       warning(`Failed to ingest \`${sbom}\`.`);
     }
   }

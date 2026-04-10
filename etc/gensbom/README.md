@@ -4,23 +4,23 @@
 
 **Prerequisites:**
 
-* `podman`
-* [`config.json`](https://github.com/google/go-containerregistry/tree/main/pkg/authn#docker-config-auth)
+- `podman`
+- [`config.json`](https://github.com/google/go-containerregistry/tree/main/pkg/authn#docker-config-auth)
   in the current working directory
-* `trust.crt` (optional custom trust anchors) in the current working directory
+- `trust.crt` (optional custom trust anchors) in the current working directory
   if the running TPA service uses a certificate signed by these trust anchors
-* `TPA_SERVICE_URL`, holding the URL to the running TPA service, e.g.
+- `TPA_SERVICE_URL`, holding the URL to the running TPA service, e.g.
   `my.tpa.instance.abc:8765`
-* `TPA_AUTH_TOKEN`, holding the valid authorization token, e.g.
+- `TPA_AUTH_TOKEN`, holding the valid authorization token, e.g.
   `Bearer XXXXXXXXXX`
-* `gensbom` image
-  * you can either get it from the [GitHub Container Registry](https://github.com/guacsec/trustify/pkgs/container/gensbom):
+- `gensbom` image
+  - you can either get it from the [GitHub Container Registry](https://github.com/guacsec/trustify/pkgs/container/gensbom):
 
     ```
     podman pull ghcr.io/guacsec/gensbom:latest
     ```
 
-  * or build it [on its own](#building-the-container-image)
+  - or build it [on its own](#building-the-container-image)
 
 **Running:**
 
@@ -34,24 +34,24 @@ podman run --rm -v "${PWD}":/gensbom:Z -e 'TPA_*' gensbom:latest images.txt
 
 **Output:**
 
-* `${PWD}/sboms` directory with the generated SBOMs
-* `${PWD}/sboms.zip` archive with the generated SBOMs
+- `${PWD}/sboms` directory with the generated SBOMs
+- `${PWD}/sboms.zip` archive with the generated SBOMs
 
 ## Using the Script
 
 **Prerequisites:**
 
-* `awk`
-* Bash
-* `curl`
-* `sha512sum`
-* [`syft`](https://github.com/anchore/syft/releases)
-* `zip`
-* [`config.json`](https://github.com/google/go-containerregistry/tree/main/pkg/authn#docker-config-auth)
+- `awk`
+- Bash
+- `curl`
+- `sha512sum`
+- [`syft`](https://github.com/anchore/syft/releases)
+- `zip`
+- [`config.json`](https://github.com/google/go-containerregistry/tree/main/pkg/authn#docker-config-auth)
   in the current working directory
-* `TPA_SERVICE_URL`, holding the URL to the running TPA service, e.g.
+- `TPA_SERVICE_URL`, holding the URL to the running TPA service, e.g.
   `my.tpa.instance.abc:8765`
-* `TPA_AUTH_TOKEN`, holding the valid authorization token, e.g.
+- `TPA_AUTH_TOKEN`, holding the valid authorization token, e.g.
   `Bearer XXXXXXXXXX`
 
 **Running:**
@@ -66,7 +66,7 @@ podman run --rm -v "${PWD}":/gensbom:Z -e 'TPA_*' gensbom:latest images.txt
 
 **Output:**
 
-* Same as in the previous case
+- Same as in the previous case
 
 ## Troubleshooting
 
@@ -97,13 +97,13 @@ For other container image registries the process may be similar.
 
 The `Containerfile` build arguments:
 
-* `SYFT_REGISTRY`, holding the container registry from which the `syft`
+- `SYFT_REGISTRY`, holding the container registry from which the `syft`
   container is pulled (default: `ghcr.io/anchore`)
-* `SYFT_IMAGE`, holding the `syft` container image name (default: `syft`)
-* `SYFT_TAG`, holding the `syft` container image tag (default: `v1.36.0`)
+- `SYFT_IMAGE`, holding the `syft` container image name (default: `syft`)
+- `SYFT_TAG`, holding the `syft` container image tag (default: `v1.36.0`)
 
 ## References
 
-* [Docker Config Auth](https://github.com/google/go-containerregistry/tree/main/pkg/authn#docker-config-auth)
-* [Syft](https://github.com/anchore/syft)
-* [Syft: Private Registry Authentication](https://github.com/anchore/syft/wiki/private-registry-authentication)
+- [Docker Config Auth](https://github.com/google/go-containerregistry/tree/main/pkg/authn#docker-config-auth)
+- [Syft](https://github.com/anchore/syft)
+- [Syft: Private Registry Authentication](https://github.com/anchore/syft/wiki/private-registry-authentication)

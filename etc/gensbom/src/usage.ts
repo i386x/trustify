@@ -1,18 +1,15 @@
 import { HelpFormatter } from "./format.js";
 
-const USAGE = (new HelpFormatter())
+const USAGE = new HelpFormatter()
   .usage("%prog <FILE>")
   .par("or as the container:")
-  .codeblock(
-    "# Read a list of images from the <FILE>",
-    [
-      "podman run",
-      "--rm",
-      `-v "\${PWD}":/gensbom:Z`,
-      "-e 'TPA_*'",
-      "gensbom:latest <FILE>",
-    ],
-  )
+  .codeblock("# Read a list of images from the <FILE>", [
+    "podman run",
+    "--rm",
+    `-v "\${PWD}":/gensbom:Z`,
+    "-e 'TPA_*'",
+    "gensbom:latest <FILE>",
+  ])
   .par(
     "In the current working directory:",
     "",

@@ -1,8 +1,10 @@
 {
+  "experimentalOperatorPosition": "start",
   "printWidth": 79,
   "useTabs": false,
   "semi": true,
   "singleQuote": false,
+  "quoteProps": "consistent",
   "jsxSingleQuote": false,
   "trailingComma": "all",
   "bracketSameLine": false
