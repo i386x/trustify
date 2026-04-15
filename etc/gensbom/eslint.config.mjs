@@ -192,6 +192,8 @@ export default defineConfig([
     ],
     rules: {
       // Conflicts with `prettier`
+      "@stylistic/arrow-parens": ["error", "always"],
+      // Conflicts with `prettier`
       "@stylistic/indent": "off",
       // Conflicts with `prettier`
       "@stylistic/indent-binary-ops": "off",

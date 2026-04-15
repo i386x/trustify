@@ -114,10 +114,10 @@ class SbomGenerator {
   }
 
   async pack(): Promise<void> {
-    const files = globSync(
-      "*.json",
-      { cwd: this.sbomsDir, exclude: file => !isNonEmptyFile(file) },
-    );
+    const files = globSync("*.json", {
+      cwd: this.sbomsDir,
+      exclude: (file) => !isNonEmptyFile(file),
+    });
 
     if (files.length === 0) return;
 
@@ -137,10 +137,12 @@ class SbomGenerator {
         return;
       }
 
-      console.log(styleText(
-        "green",
-        `  \`${this.sbomsArchive}\` created, ${total} bytes total`,
-      ));
+      console.log(
+        styleText(
+          "green",
+          `  \`${this.sbomsArchive}\` created, ${total} bytes total`,
+        ),
+      );
     });
 
     archive.on("entry", (entry) => {
