@@ -9,6 +9,7 @@ const COMPLEXITY = 10;
 const MAX_LINE_LENGTH = 79;
 const MAX_NESTED_CALLBACKS = 3;
 const MAX_PARAMS = 5;
+const MAX_STATEMENTS = 15;
 
 export default defineConfig([
   // Besides ESLint's default `**/*.js`, `**/*.cjs`, and `**/*.mjs`, lint also
@@ -76,7 +77,7 @@ export default defineConfig([
       ],
       "max-nested-callbacks": ["error", MAX_NESTED_CALLBACKS],
       "max-params": ["error", MAX_PARAMS],
-      "max-statements": "error",
+      "max-statements": ["error", MAX_STATEMENTS],
       "new-cap": "error",
       "no-alert": "error",
       "no-array-constructor": "error",

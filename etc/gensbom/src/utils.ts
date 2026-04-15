@@ -1,7 +1,9 @@
+import { type InspectColor, styleText } from "node:util";
 import { argv, cwd } from "node:process";
 import { basename } from "node:path";
 import { statSync } from "node:fs";
-import { styleText } from "node:util";
+
+export type Color = InspectColor | readonly InspectColor[];
 
 const SCRIPT_NAME_DEFAULT = "<script>";
 
@@ -49,8 +51,8 @@ export function warning(...messages: string[]): void {
   if (messages.length > 0) console.error("");
 }
 
-export function werror(message: string): void {
-  console.error(styleText("red", message));
+export function werror(message: string, color: Color = "red"): void {
+  console.error(styleText(color, message));
 }
 
 export function handleError(err: unknown): number {

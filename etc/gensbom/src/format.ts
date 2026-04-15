@@ -1,5 +1,5 @@
-import { type InspectColor, styleText } from "node:util";
-import { scriptName } from "./utils.js";
+import { type Color, scriptName } from "./utils.js";
+import { styleText } from "node:util";
 
 const CODE_DEFAULT = "cyan";
 const COMMENT_DEFAULT = "yellow";
@@ -10,14 +10,12 @@ const TERM_DEFAULT = "magenta";
 const WARNING = "WARNING:";
 const WARNING_DEFAULT = "yellowBright";
 
-type StyleProperty = InspectColor | readonly InspectColor[];
-
 interface Style {
-  comment?: StyleProperty;
-  code?: StyleProperty;
-  term?: StyleProperty;
-  warning?: StyleProperty;
-  section?: StyleProperty;
+  comment?: Color;
+  code?: Color;
+  term?: Color;
+  warning?: Color;
+  section?: Color;
 }
 
 interface Formatter {

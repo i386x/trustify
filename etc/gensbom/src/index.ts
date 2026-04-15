@@ -1,11 +1,25 @@
 import { argv, env } from "node:process";
-import { createReadStream, mkdirSync, rmSync } from "node:fs";
-import { isNonEmptyFile, warning, workspace } from "./utils.js";
+import {
+  createReadStream,
+  createWriteStream,
+  globSync,
+  mkdirSync,
+  rmSync,
+} from "node:fs";
+import {
+  inform,
+  isNonEmptyFile,
+  warning,
+  werror,
+  workspace,
+} from "./utils.js";
 import { Config } from "./config.js";
 import { TPAService } from "./tpa.js";
+import archiver from "archiver";
 import { createInterface } from "node:readline";
 import { execSync } from "node:child_process";
 import { join } from "node:path";
+import { styleText } from "node:util";
 import { usage } from "./usage.js";
 
 const SBOM_ID_WIDTH = 10;
@@ -45,6 +59,7 @@ class SbomGenerator {
   private prepared: boolean;
   private imageCount: number;
   private sbomsDir: string;
+  private sbomsArchive: string;
 
   constructor(config: Config) {
     this.shell = config.shell;
@@ -52,13 +67,14 @@ class SbomGenerator {
     this.prepared = false;
     this.imageCount = 0;
     this.sbomsDir = join(workspace(), SBOMS_DIR_NAME);
+    this.sbomsArchive = join(workspace(), SBOMS_ARCHIVE_NAME);
   }
 
   prepare(): void {
     if (this.prepared) return;
 
     rmSync(this.sbomsDir, { force: true, recursive: true });
-    rmSync(join(workspace(), SBOMS_ARCHIVE_NAME), { force: true });
+    rmSync(this.sbomsArchive, { force: true });
     mkdirSync(this.sbomsDir, { recursive: true });
 
     this.imageCount = 0;
@@ -97,6 +113,59 @@ class SbomGenerator {
     return sbomFile;
   }
 
+  async pack(): Promise<void> {
+    const files = globSync(
+      "*.json",
+      { cwd: this.sbomsDir, exclude: file => !isNonEmptyFile(file) },
+    );
+
+    if (files.length === 0) return;
+
+    const output = createWriteStream(this.sbomsArchive);
+    const archive = archiver("zip", { zlib: { level: 9 } });
+    let failed = false;
+
+    inform(`\nPacking \`${this.sbomsDir}\` into \`${this.sbomsArchive}\`:`);
+
+    output.on("close", () => {
+      const total = archive.pointer().toString();
+
+      if (failed) {
+        werror(
+          `\`${this.sbomsArchive}\` may contain errors or incomplete data.`,
+        );
+        return;
+      }
+
+      console.log(styleText(
+        "green",
+        `  \`${this.sbomsArchive}\` created, ${total} bytes total`,
+      ));
+    });
+
+    archive.on("entry", (entry) => {
+      console.log(`  \`${entry.name}\` has been added to the archive`);
+    });
+
+    archive.on("warning", (err) => {
+      failed = true;
+      werror(`  WARNING (${err.code}): ${err.message}`, "yellow");
+    });
+
+    archive.on("error", (err) => {
+      failed = true;
+      werror(`  ERROR (${err.code}): ${err.message}`);
+    });
+
+    archive.pipe(output);
+
+    files.forEach((file) => {
+      archive.file(join(this.sbomsDir, file), { name: file });
+    });
+
+    await archive.finalize();
+  }
+
   async generate(inputFile: string): Promise<void> {
     const rl = createInterface({
       input: createReadStream(inputFile),
@@ -109,6 +178,8 @@ class SbomGenerator {
 
     for await (const image of rl)
       await this.tpaService.ingest(this.runSyft(image));
+
+    await this.pack();
   }
 }
 
