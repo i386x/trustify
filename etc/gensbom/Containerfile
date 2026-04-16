@@ -2,19 +2,35 @@ ARG SYFT_REGISTRY=ghcr.io/anchore
 ARG SYFT_IMAGE=syft
 ARG SYFT_TAG=v1.36.0
 
-FROM registry.access.redhat.com/ubi9/ubi:latest
+FROM registry.access.redhat.com/ubi9/nodejs-22:latest AS builder
+
+USER 1001
+COPY --chown=1001 . .
+
+RUN pwd && \
+    npm version && \
+    npm config ls -l && \
+    npm ci --verbose --ignore-scripts --no-audit && \
+    npm run format:check && \
+    npm run build && \
+    npm run lint
+
+FROM registry.access.redhat.com/ubi9/nodejs-22-minimal:latest
 
 ARG SYFT_REGISTRY
 ARG SYFT_IMAGE
 ARG SYFT_TAG
 
-COPY --from=${SYFT_REGISTRY}/${SYFT_IMAGE}:${SYFT_TAG} /syft /usr/local/bin/syft
-COPY ./gensbom.sh /usr/local/bin/gensbom.sh
+USER 0
 
-RUN dnf -y install gawk zip && \
-    dnf clean all && \
-    mkdir -p /gensbom
+COPY --from=${SYFT_REGISTRY}/${SYFT_IMAGE}:${SYFT_TAG} /syft /usr/local/bin/syft
+COPY --from=builder /opt/app-root/src/package*.json ./
+COPY --from=builder /opt/app-root/src/dist ./dist
+COPY --from=builder /opt/app-root/src/bin ./bin
+
+RUN mkdir -p /gensbom && \
+    npm install --production
 
 WORKDIR /gensbom
 
-ENTRYPOINT ["/usr/local/bin/gensbom.sh"]
+ENTRYPOINT ["/opt/app-root/src/bin/gensbom.js"]

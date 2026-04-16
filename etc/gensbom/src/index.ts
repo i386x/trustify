@@ -83,7 +83,7 @@ class SbomGenerator {
 
   sbomFileFromImageURI(image: string): string {
     const paddedId = this.imageCount.toString().padStart(SBOM_ID_WIDTH, "0");
-    const sanitizedImage = image.replace(":", "-").replace("/", "-");
+    const sanitizedImage = image.replaceAll(":", "-").replaceAll("/", "-");
     const fileName = `sbom${paddedId}-${sanitizedImage}.json`;
 
     this.imageCount += 1;
